@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="freeplane-bin">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../freeplane-bin/BIN/freeplanelauncher.jar!/" />
+      <root url="file://$PROJECT_DIR$/../freeplane-bin/BIN/core/org.freeplane.core/lib" />
+      <root url="file://$PROJECT_DIR$/../freeplane-bin/BIN/plugins/org.freeplane.plugin.script/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/../freeplane-bin/BIN/core/org.freeplane.core/lib" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/../freeplane-bin/BIN/plugins/org.freeplane.plugin.script/lib" recursive="false" />
+  </library>
+</component>
