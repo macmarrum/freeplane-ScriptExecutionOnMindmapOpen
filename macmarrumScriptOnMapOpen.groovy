@@ -48,6 +48,9 @@ class ScriptOnMapOpen {
     }
 }
 
-Controller controller = Controller.getCurrentController()
-controller.getMapViewManager().getMaps().values().stream().distinct().forEach(ScriptOnMapOpen::executeScriptOnMapOpen)
+def controller = Controller.currentController
+def maps = controller.mapViewManager.maps.values().toSet()
+for (map in maps) {
+    ScriptOnMapOpen.executeScriptOnMapOpen(map)
+}
 controller.addMapLifeCycleListener(new MapCreationListener())
