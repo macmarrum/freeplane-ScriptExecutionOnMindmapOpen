@@ -1,5 +1,7 @@
 package io.github.macmarrum.freeplane
 
+import org.freeplane.core.resources.ResourceController
+import org.freeplane.core.ui.components.UITools
 import org.freeplane.core.util.LogUtils
 import org.freeplane.features.attribute.Attribute
 import org.freeplane.features.attribute.NodeAttributeTableModel
@@ -10,7 +12,7 @@ import org.freeplane.features.mode.Controller
 import org.freeplane.plugin.script.ExecuteScriptException
 import org.freeplane.plugin.script.ScriptingEngine
 
-import java.text.MessageFormat
+import javax.swing.JOptionPane
 
 class MapCreationListener implements IMapLifeCycleListener {
 
@@ -21,9 +23,18 @@ class MapCreationListener implements IMapLifeCycleListener {
 }
 
 class ScriptOnMapOpen {
-    public static final String SCRIPT_ON_MAP_OPEN_ATTR_NAME = "scriptOnMapOpen"
+    public static final String ATTRIBUTE_NAME = "scriptOnMapOpen"
+    public static final String OPTION_NAME = "ScriptOnMapOpen.execute_without_asking"
+    private static final String TRUE = "true"
+    private static final String ASK = "ask"
+    private static Map allowedForMap = new HashMap<MapModel, Boolean>()
+    private static final String CONFIRMATION_MESSAGE_FORMAT = "Execute scriptOnMapOpen for\n%s?"
+    private static final String CONFIRMATION_TITLE = "Execute scriptOnMapOpen?"
 
     static void executeScriptOnMapOpen(MapModel map) {
+        String executeWithoutAsking = ResourceController.getResourceController().getProperty(OPTION_NAME, ASK)
+        if (!(executeWithoutAsking == ASK || executeWithoutAsking == TRUE))
+            return
         NodeModel root = map.getRootNode()
         NodeAttributeTableModel attributeTable = root.getExtension(NodeAttributeTableModel.class)
         if (attributeTable != null) {
@@ -32,10 +43,21 @@ class ScriptOnMapOpen {
             String script
             int i = 0
             for (Attribute attr : attributeTable.getAttributes()) {
-                if (attr.getName().toLowerCase().startsWith(SCRIPT_ON_MAP_OPEN_ATTR_NAME.toLowerCase())) {
+                if (attr.getName().toLowerCase().startsWith(ATTRIBUTE_NAME.toLowerCase())) {
+                    if (executeWithoutAsking == ASK) {
+                        if (!allowedForMap.containsKey(map)) {
+                            String message = String.format(CONFIRMATION_MESSAGE_FORMAT, mapFile.name)
+                            int response = UITools.showConfirmDialog(root, message, CONFIRMATION_TITLE, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)
+                            boolean isExecutionAllowed = response == 0
+                            allowedForMap.put(map, isExecutionAllowed)
+                            if (!isExecutionAllowed)
+                                return
+                        } else if (!allowedForMap.get(map))
+                            return
+                    }
                     script = (String) attr.getValue()
                     if (script != null) {
-                        LogUtils.info(MessageFormat.format("executing {0} (#{1}) in \"{2}\"", attr.getName(), ++i, mapDescription))
+                        LogUtils.info(String.format("executing %s (#%d) in \"%s\"", attr.getName(), ++i, mapDescription))
                         try {
                             ScriptingEngine.executeScript(root, script)
                         } catch (ExecuteScriptException e) {
