@@ -46,7 +46,7 @@ class ScriptOnMapOpen {
                 if (attr.getName().toLowerCase().startsWith(ATTRIBUTE_NAME.toLowerCase())) {
                     if (executeWithoutAsking == ASK) {
                         if (!allowedForMap.containsKey(map)) {
-                            String message = String.format(CONFIRMATION_MESSAGE_FORMAT, mapFile.name)
+                            String message = String.format(CONFIRMATION_MESSAGE_FORMAT, mapDescription)
                             int response = UITools.showConfirmDialog(root, message, CONFIRMATION_TITLE, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)
                             boolean isExecutionAllowed = response == 0
                             allowedForMap.put(map, isExecutionAllowed)
