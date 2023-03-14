@@ -41,9 +41,11 @@ class ScriptOnMapOpen {
             final File mapFile = map.getFile()
             final String mapDescription = mapFile != null ? mapFile.getName() : "not-yet-saved mindmap with root: " + root.getText()
             String script
-            int i = 0
+            String attrName
+            List<String[]> listOfNameScript = new LinkedList<>()
             for (Attribute attr : attributeTable.getAttributes()) {
-                if (attr.getName().toLowerCase().startsWith(ATTRIBUTE_NAME.toLowerCase())) {
+                attrName = attr.getName()
+                if (attrName.toLowerCase().startsWith(ATTRIBUTE_NAME.toLowerCase())) {
                     if (executeWithoutAsking == ASK) {
                         if (!allowedForMap.containsKey(map)) {
                             String message = String.format(CONFIRMATION_MESSAGE_FORMAT, mapDescription)
@@ -56,14 +58,19 @@ class ScriptOnMapOpen {
                             return
                     }
                     script = (String) attr.getValue()
-                    if (script != null) {
-                        LogUtils.info(String.format("executing %s (#%d) in \"%s\"", attr.getName(), ++i, mapDescription))
-                        try {
-                            ScriptingEngine.executeScript(root, script)
-                        } catch (ExecuteScriptException e) {
-                            LogUtils.severe(e)
-                        }
-                    }
+                    if (script != null)
+                        listOfNameScript.add(new String[] {attrName, script})
+                }
+            }
+            int i = 0
+            for (String[] attrName_script : listOfNameScript) {
+                attrName = attrName_script[0]
+                script = attrName_script[1]
+                LogUtils.info(String.format("executing %s (#%d) in \"%s\"", attrName, ++i, mapDescription))
+                try {
+                    ScriptingEngine.executeScript(root, script)
+                } catch (ExecuteScriptException e) {
+                    LogUtils.severe(e)
                 }
             }
         }
