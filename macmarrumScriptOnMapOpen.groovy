@@ -28,8 +28,6 @@ class ScriptOnMapOpen {
     private static final String TRUE = "true"
     private static final String ASK = "ask"
     private static Map allowedForMap = new HashMap<MapModel, Boolean>()
-    private static final String CONFIRMATION_MESSAGE_FORMAT = "Execute scriptOnMapOpen for\n%s?"
-    private static final String CONFIRMATION_TITLE = "Execute scriptOnMapOpen?"
 
     static void executeScriptOnMapOpen(MapModel map) {
         String executeWithoutAsking = ResourceController.getResourceController().getProperty(OPTION_NAME, ASK)
@@ -48,8 +46,8 @@ class ScriptOnMapOpen {
                 if (attrName.toLowerCase().startsWith(ATTRIBUTE_NAME.toLowerCase())) {
                     if (executeWithoutAsking == ASK) {
                         if (!allowedForMap.containsKey(map)) {
-                            String message = String.format(CONFIRMATION_MESSAGE_FORMAT, mapDescription)
-                            int response = UITools.showConfirmDialog(root, message, CONFIRMATION_TITLE, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)
+                            String message = String.format("Execute scriptOnMapOpen for\n%s?", mapDescription)
+                            int response = UITools.showConfirmDialog(root, message, "Execute scriptOnMapOpen?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)
                             boolean isExecutionAllowed = response == 0
                             allowedForMap.put(map, isExecutionAllowed)
                             if (!isExecutionAllowed)
