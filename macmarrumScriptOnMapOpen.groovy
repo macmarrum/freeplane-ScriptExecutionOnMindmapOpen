@@ -39,7 +39,7 @@ class ScriptOnMapOpen {
         NodeAttributeTableModel attributeTable = root.getExtension(NodeAttributeTableModel.class)
         if (attributeTable != null) {
             final File mapFile = map.getFile()
-            final String mapDescription = mapFile != null ? mapFile.getName() : root.getText()
+            final String mapDescription = mapFile != null ? mapFile.getName() : "not-yet-saved mindmap with root: " + root.getText()
             String script
             int i = 0
             for (Attribute attr : attributeTable.getAttributes()) {
