@@ -8,6 +8,10 @@ To execute a script for a mindmap, in your root node add an attribute named "scr
 
 _Note: The attribute name must start with "scriptOnMapOpen" but can have any suffix_
 
+## Version Compatibility
+
+Works with Freeplane version 1.7.10 and above.
+
 ## Download
 
 [**ScriptExecutionOnMindmapOpen.addon.mm**](../../releases/)
