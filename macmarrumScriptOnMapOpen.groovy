@@ -27,7 +27,6 @@ class ScriptOnMapOpen {
     public static final String OPTION_NAME = "ScriptOnMapOpen.execute_without_asking"
     private static final String TRUE = "true"
     private static final String ASK = "ask"
-    private static Map allowedForMap = new HashMap<MapModel, Boolean>()
 
     static void executeScriptOnMapOpen(MapModel map) {
         String executeWithoutAsking = ResourceController.getResourceController().getProperty(OPTION_NAME, ASK)
@@ -44,31 +43,29 @@ class ScriptOnMapOpen {
             for (Attribute attr : attributeTable.getAttributes()) {
                 attrName = attr.getName()
                 if (attrName.toLowerCase().startsWith(ATTRIBUTE_NAME.toLowerCase())) {
-                    if (executeWithoutAsking == ASK) {
-                        if (!allowedForMap.containsKey(map)) {
-                            String message = String.format("Execute scriptOnMapOpen for\n%s?", mapDescription)
-                            int response = UITools.showConfirmDialog(null, message, "Execute scriptOnMapOpen?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)
-                            boolean isExecutionAllowed = response == 0
-                            allowedForMap.put(map, isExecutionAllowed)
-                            if (!isExecutionAllowed)
-                                return
-                        } else if (!allowedForMap.get(map))
-                            return
-                    }
                     script = (String) attr.getValue()
                     if (script != null)
-                        listOfNameScript.add(new String[] {attrName, script})
+                        listOfNameScript.add(new String[]{attrName, script})
                 }
+            }
+            if (executeWithoutAsking == ASK && listOfNameScript.size() > 0) {
+                String message = String.format("Execute scriptOnMapOpen for\n%s?", mapDescription)
+                int response = UITools.showConfirmDialog(null, message, "Execute scriptOnMapOpen?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)
+                if (response != 0)
+                    return
             }
             int i = 0
             for (String[] attrName_script : listOfNameScript) {
                 attrName = attrName_script[0]
                 script = attrName_script[1]
-                LogUtils.info(String.format("executing %s (#%d) in \"%s\"", attrName, ++i, mapDescription))
+                def messageAboutExecuting = String.format("executing %s (#%d) in \"%s\"", attrName, ++i, mapDescription)
+                LogUtils.info(messageAboutExecuting)
                 try {
                     ScriptingEngine.executeScript(root, script)
                 } catch (ExecuteScriptException e) {
                     LogUtils.severe(e)
+                    String messageAboutError = String.format("Error %s\n\n%s", messageAboutExecuting, e.message)
+                    UITools.showMessage(messageAboutError, JOptionPane.ERROR_MESSAGE)
                 }
             }
         }
