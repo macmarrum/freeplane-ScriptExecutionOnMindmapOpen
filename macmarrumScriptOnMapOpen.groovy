@@ -47,7 +47,7 @@ class ScriptOnMapOpen {
                     if (executeWithoutAsking == ASK) {
                         if (!allowedForMap.containsKey(map)) {
                             String message = String.format("Execute scriptOnMapOpen for\n%s?", mapDescription)
-                            int response = UITools.showConfirmDialog(root, message, "Execute scriptOnMapOpen?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)
+                            int response = UITools.showConfirmDialog(null, message, "Execute scriptOnMapOpen?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)
                             boolean isExecutionAllowed = response == 0
                             allowedForMap.put(map, isExecutionAllowed)
                             if (!isExecutionAllowed)
